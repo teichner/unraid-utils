@@ -2,6 +2,7 @@
 import sys
 import os
 import os.path
+import shlex
 from contextlib import contextmanager
 from operator import attrgetter
 from domain import main_block_name
@@ -32,11 +33,12 @@ class DomainBackupService:
 
     def take_snapshot(self, domain):
         sys.stderr.write(f"Taking snapshot of {domain.name}\n")
+        snapshot_path = shlex.quote(domain.snapshot_path)
         cmd = [
             'virsh', 'snapshot-create-as',
             '--domain', domain.name,
             domain.snapshot_name,
-            '--diskspec', f"{main_block_name},file={domain.snapshot_path}",
+            '--diskspec', f"{main_block_name},file={snapshot_path}",
             '--disk-only', '--atomic', '--quiesce'
         ]
         self.runner.run(cmd)
