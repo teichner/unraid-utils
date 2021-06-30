@@ -2,6 +2,7 @@
 
 import os
 import os.path
+import shutil
 import subprocess
 from dataclasses import dataclass
 
@@ -30,4 +31,4 @@ class Runner():
 
     def copy(self, src, dst):
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        os.copy(src, dst)
+        shutil.copy(src, dst)
