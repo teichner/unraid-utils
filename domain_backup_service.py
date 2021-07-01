@@ -7,16 +7,14 @@ from contextlib import contextmanager
 from operator import attrgetter
 from domain import main_block_name
 
-# TODO: Move to config file
-backup_base = "/mnt/user/backups"
-backup_limit = 4 # per domain
-
 class DomainBackupService:
-    def __init__(self, runner):
+    def __init__(self, runner, base, limit):
         self.runner = runner
+        self.base = base
+        self.limit = limit
 
     def backup_records(self, domain):
-        for name in os.listdir(backup_base):
+        for name in os.listdir(self.base):
             try:
                 yield domain.parse_backup_name(name)
             except ValueError:
@@ -24,11 +22,11 @@ class DomainBackupService:
 
     def rotate_backups(self, domain):
         records = list(self.backup_records(domain))
-        delta = len(records) - backup_limit
+        delta = len(records) - self.limit
         if delta > 0:
             records.sort(key=attrgetter('time'))
             for record in records[:delta]:
-                path = os.path.join(backup_base, record.name)
+                path = os.path.join(self.base, record.name)
                 self.runner.remove(path)
 
     def take_snapshot(self, domain):
@@ -72,7 +70,7 @@ class DomainBackupService:
 
     def backup_domain(self, domain):
         backup_path = os.path.join(
-            backup_base,
+            self.base,
             domain.format_backup_name())
         with self.captured_domain(domain):
             cmd = ['rsync', '-aP', domain.path, backup_path]
