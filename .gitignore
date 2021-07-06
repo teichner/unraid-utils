@@ -11,3 +11,5 @@ htmlcov
 *.py~
 *.un~
 *.swp
+
+backup.ini
