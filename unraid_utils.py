@@ -7,16 +7,6 @@ from domain import domain_entry
 from runner import Runner, DryRunner
 from configparser import ConfigParser
 
-# server = "10.10.0.252"
-# remote_base = "/volume1/NetBackup"
-# remote_volume = "//Synology/NetBackup"
-# local_base = "/mnt/user"
-# key_file = "/boot/config/sshroot/Tower-rsync-key"
-# remote_credentials_file = "/boot/config/custom/synology_credentials"
-
-# with open(remote_credentials_file, 'r') as f:
-#     user, password = f.read().strip().split(':')
-
 def section_subname(expected_type, name):
     section_type, subname = name.split('.')
     if section_type.lower() != expected_type.lower():
@@ -136,10 +126,7 @@ def main():
         help='backup files to remote location')
 
     args = parser.parse_args()
-
-    # TEST
-    #runner = DryRunner() if args.dry_run else Runner()
-    runner = DryRunner()
+    runner = DryRunner() if args.dry_run else Runner()
 
     if args.command == 'backup-vms':
         backup_vms(runner, config_values)
